@@ -215,7 +215,7 @@ void fillArray(int* arr, const int n, int min, int max) {
         arr[i] = getNumber();
         if (arr[i] < min || arr[i] > max) {
             cout << "Элемент вне допустимого диапазона! Повторите ввод." << endl;
-            i--;
+            abort();
         }
     }
 }
