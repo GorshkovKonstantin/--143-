@@ -20,7 +20,7 @@ double testinput();
 /**
     * @bief главная функция программы
     * @return 0  если успешно, 1 если ошибка
-    /*
+    */
 int main() {
     setlocale(LC_ALL, "ru");
     const double ounces = 28.3;
@@ -48,6 +48,7 @@ double testinput() {
         cout << "ошибка: некорректный ввод" << endl;
         cin.clear();//сбрасываем флаг ошибки
         cin.ignore(numetric_limits<streamsize>:max(), '\n'); //очищаем буфер ввода
+        abort();// возвращаем прерывание пррограммы
         return -1;// возвращаем -1, чтобы обозначить ошибку
     }
     return gramms;
