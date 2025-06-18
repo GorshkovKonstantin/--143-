@@ -28,7 +28,7 @@ double getPositiveStep();
  * @param x значение x
  * @return true, если x входит в OOD, иначе false.
  */
-bool isOOF(double x);
+bool isOOF(const double x);
 
 /**
  * @brief Точка входа в программу.
