@@ -6,88 +6,17 @@
 
 using namespace std;
 
-// Функция для заполнения массива случайными числами
-void fillRandom(vector<vector<int>>& arr, int n, int m) {
-  srand(time(0)); // Инициализация генератора случайных чисел
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < m; ++j) {
-      arr[i][j] = rand() % 100 - 50; // Случайные числа от -50 до 49
-    }
-  }
-}
+// Объявления функций (прототипы)
+void fillRandom(vector<vector<int>>& arr, size_t n, size_t m, int minVal, int maxVal);
+void fillKeyboard(vector<vector<int>>& arr, size_t n, size_t m);
+void printArray(const vector<vector<int>>& arr, size_t n, size_t m);
+void replaceMaxWithOppositeSign(vector<vector<int>>& arr, size_t n, size_t m);
+void insertZeroColumnsAfterMaxColumns(vector<vector<int>>& arr, size_t n, size_t& m);
 
-// Функция для заполнения массива с клавиатуры
-void fillKeyboard(vector<vector<int>>& arr, int n, int m) {
-  cout << "Введите элементы массива:" << endl;
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < m; ++j) {
-      cout << "arr[" << i << "][" << j << "] = ";
-      cin >> arr[i][j];
-    }
-  }
-}
-
-// Функция для вывода массива на экран
-void printArray(const vector<vector<int>>& arr, int n, int m) {
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < m; ++j) {
-      cout << arr[i][j] << " ";
-    }
-    cout << endl;
-  }
-}
-
-// 1. Функция для замены максимального элемента каждой строки на противоположный по знаку
-void replaceMaxWithOppositeSign(vector<vector<int>>& arr, int n, int m) {
-  for (int i = 0; i < n; ++i) {
-    int maxVal = arr[i][0];
-    int maxIndex = 0;
-
-    for (int j = 1; j < m; ++j) {
-      if (arr[i][j] > maxVal) {
-        maxVal = arr[i][j];
-        maxIndex = j;
-      }
-    }
-
-    arr[i][maxIndex] = -maxVal; // Заменяем на противоположный знак
-  }
-}
-
-// 2. Функция для вставки после всех столбцов, содержащих максимальный элемент столбец из нулей
-void insertZeroColumnsAfterMaxColumns(vector<vector<int>>& arr, int n, int& m) {
-  vector<int> maxColumnIndices; // Храним индексы столбцов с максимальными элементами
-
-  // Находим индексы столбцов с максимальными элементами хотя бы в одной строке
-  for (int j = 0; j < m; ++j) {
-    bool hasMax = false;
-    for (int i = 0; i < n; ++i) {
-      int maxValInRow = arr[i][0];
-      for (int k = 1; k < m; ++k){
-          maxValInRow = max(maxValInRow, arr[i][k]);
-      }
-      if (arr[i][j] == maxValInRow) {
-        hasMax = true;
-        break;
-      }
-    }
-    if (hasMax) {
-      maxColumnIndices.push_back(j);
-    }
-  }
-
-  // Вставляем столбцы из нулей.  Важно итерироваться в обратном порядке, чтобы индексы не сбивались
-  for (int i = maxColumnIndices.size() - 1; i >= 0; --i) {
-    int columnIndex = maxColumnIndices[i];
-    for (int row = 0; row < n; ++row) {
-      arr[row].insert(arr[row].begin() + columnIndex + 1, 0);
-    }
-    ++m; // Увеличиваем количество столбцов
-  }
-}
 
 int main() {
-  int n, m;
+  size_t n, m;
+  int minVal, maxVal;
 
   cout << "Введите количество строк (n): ";
   cin >> n;
@@ -105,7 +34,11 @@ int main() {
   cin >> choice;
 
   if (choice == 1) {
-    fillRandom(arr, n, m);
+    cout << "Введите минимальное значение диапазона: ";
+    cin >> minVal;
+    cout << "Введите максимальное значение диапазона: ";
+    cin >> maxVal;
+    fillRandom(arr, n, m, minVal, maxVal);
   } else if (choice == 2) {
     fillKeyboard(arr, n, m);
   } else {
@@ -125,4 +58,85 @@ int main() {
   printArray(arr, n, m);
 
   return 0;
+}
+
+
+// Функция для заполнения массива случайными числами
+void fillRandom(vector<vector<int>>& arr, size_t n, size_t m, int minVal, int maxVal) {
+  srand(time(0)); // Инициализация генератора случайных чисел
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < m; ++j) {
+      arr[i][j] = rand() % (maxVal - minVal + 1) + minVal;
+    }
+  }
+}
+
+// Функция для заполнения массива с клавиатуры
+void fillKeyboard(vector<vector<int>>& arr, size_t n, size_t m) {
+  cout << "Введите элементы массива:" << endl;
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < m; ++j) {
+      cout << "arr[" << i << "][" << j << "] = ";
+      cin >> arr[i][j];
+    }
+  }
+}
+
+// Функция для вывода массива на экран
+void printArray(const vector<vector<int>>& arr, size_t n, size_t m) {
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < m; ++j) {
+      cout << arr[i][j] << " ";
+    }
+    cout << endl;
+  }
+}
+
+// 1. Функция для замены максимального элемента каждой строки на противоположный по знаку
+void replaceMaxWithOppositeSign(vector<vector<int>>& arr, size_t n, size_t m) {
+  for (size_t i = 0; i < n; ++i) {
+    int maxVal = arr[i][0];
+    size_t maxIndex = 0;
+
+    for (size_t j = 1; j < m; ++j) {
+      if (arr[i][j] > maxVal) {
+        maxVal = arr[i][j];
+        maxIndex = j;
+      }
+    }
+
+    arr[i][maxIndex] = -maxVal; // Заменяем на противоположный знак
+  }
+}
+
+// 2. Функция для вставки после всех столбцов, содержащих максимальный элемент столбец из нулей
+void insertZeroColumnsAfterMaxColumns(vector<vector<int>>& arr, size_t n, size_t& m) {
+  vector<size_t> maxColumnIndices; // Храним индексы столбцов с максимальными элементами
+
+  // Находим индексы столбцов с максимальными элементами хотя бы в одной строке
+  for (size_t j = 0; j < m; ++j) {
+    bool hasMax = false;
+    for (size_t i = 0; i < n; ++i) {
+      int maxValInRow = arr[i][0];
+      for (size_t k = 1; k < m; ++k){
+          maxValInRow = max(maxValInRow, arr[i][k]);
+      }
+      if (arr[i][j] == maxValInRow) {
+        hasMax = true;
+        break;
+      }
+    }
+    if (hasMax) {
+      maxColumnIndices.push_back(j);
+    }
+  }
+
+  // Вставляем столбцы из нулей.  Важно итерироваться в обратном порядке, чтобы индексы не сбивались
+  for (int i = (int)maxColumnIndices.size() - 1; i >= 0; --i) {
+    size_t columnIndex = maxColumnIndices[i];
+    for (size_t row = 0; row < n; ++row) {
+      arr[row].insert(arr[row].begin() + columnIndex + 1, 0);
+    }
+    ++m; // Увеличиваем количество столбцов
+  }
 }
